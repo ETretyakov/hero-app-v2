@@ -1,0 +1,2 @@
+CREATE USER hero WITH PASSWORD 'heroPass123';
+CREATE DATABASE heroes_db OWNER hero;

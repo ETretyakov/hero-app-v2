@@ -1,0 +1,64 @@
+[tool.poetry]
+name = "hero-app-v2"
+version = "0.1.0"
+description = "The project to demonstrate api service development pattern using FastAPI"
+authors = ["ETretyakov <48686786+ETretyakov@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "hero_app_v2"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.91.0"
+SQLAlchemy = "^2.0.3"
+asyncpg = "^0.27.0"
+alembic = "^1.9.3"
+psycopg2-binary = "^2.9.5"
+pydantic = {extras = ["dotenv"], version = "^1.10.4"}
+python-dotenv = "^0.21.1"
+python-dateutil = "^2.8.2"
+uvicorn = "^0.20.0"
+pytest = "^7.2.1"
+pytest-asyncio = "^0.20.3"
+httpx = "^0.23.3"
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.12.0"
+flake8 = "^6.0.0"
+black = "^23.1.0"
+
+[tool.black]
+line-length = 79
+target-version = ["py310"]
+can-omit-invisible-parens = false
+
+[tool.isort]
+profile = "black"
+line_length = 79
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+ensure_newline_before_comments = true
+indent = 4
+lines_after_imports = 2
+lines_between_types = 0
+use_parentheses = true
+
+[tool.flake8]
+enable-extensions = ""
+exclude = [
+    ".git",
+    ".venv,./venv",
+    "./build/"
+]
+max-complecity = 10
+max-line-length = 79
+show-source = true
+
+docstring-convention = "google"
+pytest-fixture-no-patentheses = true
+pytest-mark-no-parentheses = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

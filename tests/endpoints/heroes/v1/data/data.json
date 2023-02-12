@@ -1,0 +1,92 @@
+{
+  "init_data": {
+    "heroes": [
+      {
+        "nickname": "SoldierBoy",
+        "role": "warrior"
+      }
+    ]
+  },
+  "cases": {
+    "create": {
+      "payload": {
+        "nickname": "SoldierBoy",
+        "role": "warrior"
+      },
+      "want": {
+        "nickname": "SoldierBoy",
+        "role": "warrior"
+      }
+    },
+    "get": {
+      "want": {
+        "nickname": "SoldierBoy",
+        "role": "warrior"
+      }
+    },
+    "update": {
+      "payload": {
+        "nickname": "MedicBoy",
+        "role": "priest"
+      },
+      "want": {
+        "nickname": "MedicBoy",
+        "role": "priest"
+      }
+    },
+    "patch": {
+      "payload": {
+        "role": "priest"
+      },
+      "want": {
+        "nickname": "SoldierBoy",
+        "role": "priest"
+      }
+    },
+    "delete": {
+      "want": {
+        "status": true,
+        "message": "The hero has been deleted!"
+      }
+    },
+    "search": {
+      "payload": {
+        "offset": 0,
+        "limit": 10,
+        "order_by": [
+          {
+            "field": "updated_at",
+            "desc": true
+          }
+        ],
+        "nickname": "Boy"
+      },
+      "want": {
+        "count": 1,
+        "items": [
+          {
+            "nickname": "SoldierBoy",
+            "role": "warrior"
+          }
+        ]
+      }
+    },
+    "search_no_results": {
+      "payload": {
+        "offset": 0,
+        "limit": 10,
+        "order_by": [
+          {
+            "field": "updated_at",
+            "desc": true
+          }
+        ],
+        "nickname": "Girl"
+      },
+      "want": {
+        "count": 0,
+        "items": []
+      }
+    }
+  }
+}
