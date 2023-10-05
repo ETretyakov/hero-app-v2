@@ -7,9 +7,9 @@ from tests.factory import Factory
 
 class HeroFactory(Factory):
     def __init__(self, async_session: AsyncSession, data: dict):
-        data = data.get("init_data", {}).get("heroes", [])
+        items = data.get("init_data", {}).get("heroes", [])
         model = Hero
-        super().__init__(async_session, model, data)
+        super().__init__(async_session, model, items)
 
 
 @pytest_asyncio.fixture

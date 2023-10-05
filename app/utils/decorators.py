@@ -1,7 +1,8 @@
 from functools import wraps
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy.exc import IntegrityError
+
 from app.exceptions.http import HTTP404, HTTP409
 
 
@@ -9,7 +10,7 @@ if TYPE_CHECKING:
     from typing import Callable
 
 
-def not_found(detail: str = None):
+def not_found(detail: Optional[str] = None):
     """Class method decorator to control must exist behaviour."""
 
     def constructor(fn: "Callable"):
@@ -27,7 +28,7 @@ def not_found(detail: str = None):
     return constructor
 
 
-def duplicate(detail: str = None):
+def duplicate(detail: Optional[str] = None):
     """Class method decorator to control database integration errors."""
 
     def constructor(fn: "Callable"):

@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -13,7 +13,7 @@ class BaseInput(BaseModel):
         values = super().dict(*args, **kwargs)
         for k, v in values.items():
             if isinstance(v, (datetime, date)):
-                values[k] = v.replace(tzinfo=None)
+                values[k] = v.replace(tzinfo=None)  # type: ignore
 
         return values
 

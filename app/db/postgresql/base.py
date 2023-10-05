@@ -26,7 +26,6 @@ engine: sa_async.AsyncEngine = sa_async.create_async_engine(
     future=True,
 )
 
-# noinspection PyTypeChecker
 SessionFactory = sessionmaker(
     bind=engine,
     autocommit=False,

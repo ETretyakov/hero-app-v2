@@ -13,7 +13,7 @@ from tests.utils.assertions import assert_response
 class TestHero:
     """Tests for hero module."""
 
-    base_url = f"/v1"
+    base_url = "/v1"
 
     # |Tests|
     @pytest.mark.asyncio
@@ -198,7 +198,7 @@ class TestHero:
 class TestHeroAsStaff:
     """Tests for hero module as staff."""
 
-    base_url = f"/v1"
+    base_url = "/v1"
 
     # |Fixtures|
     @pytest_asyncio.fixture

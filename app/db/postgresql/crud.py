@@ -1,9 +1,10 @@
-from typing import Generic, Optional, Type, TypeVar
+from typing import Generic, Optional, Sequence, Type, TypeVar
 from uuid import UUID
 
-from app.db.postgresql.base import Base
 from sqlalchemy import TextClause, func, inspect, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.postgresql.base import Base
 
 
 Table = TypeVar("Table", bound=Base)
@@ -32,11 +33,11 @@ class CRUD(Generic[Table]):
     async def select(
         self,
         *filters,
-        order_by: list["TextClause"] = None,
+        order_by: Optional[list["TextClause"]] = None,
         offset: int = 0,
         limit: int = 10,
         one_or_none: bool = False,
-    ) -> list[Table] | Optional[Table]:
+    ) -> Sequence[Table] | Optional[Table]:
         statement = select(self.table).where(*filters)
 
         if order_by:
@@ -85,7 +86,7 @@ class CRUD(Generic[Table]):
     async def count(
         self,
         *filters,
-        order_by: list["TextClause"] = None,
+        order_by: Optional[list["TextClause"]] = None,
     ) -> int:
         statement = select(
             func.count(inspect(self.table).primary_key[0]),
@@ -99,10 +100,10 @@ class CRUD(Generic[Table]):
     async def select_with_count(
         self,
         *filters,
-        order_by: list["TextClause"] = None,
+        order_by: Optional[list["TextClause"]] = None,
         offset: int = 0,
         limit: int = 10,
-    ) -> tuple[int, list[Table]]:
+    ) -> tuple[int, Optional[Sequence[Table]]]:
         return (
             await self.count(*filters),
             await self.select(

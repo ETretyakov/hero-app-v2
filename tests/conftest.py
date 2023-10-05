@@ -1,7 +1,7 @@
 import asyncio
 import json
 import os
-from typing import Generator
+from typing import AsyncGenerator, Generator
 
 import pytest
 import pytest_asyncio
@@ -57,7 +57,9 @@ async def _db_connection():
 
 
 @pytest_asyncio.fixture(scope="function")
-async def _async_session(_db_connection: AsyncConnection) -> AsyncSession:
+async def _async_session(
+    _db_connection: AsyncConnection,
+) -> AsyncGenerator[AsyncSession, None]:
     # noinspection PyTypeChecker
     session = sessionmaker(
         bind=_db_connection,
@@ -91,7 +93,7 @@ async def _async_client_as_staff(_async_session: AsyncSession):
     async with AsyncClient(
         app=app,
         base_url=f"http://{config.prefixes.admin}",
-        headers={"access_token": config.security.api_key}
+        headers={"access_token": config.security.api_key},
     ) as client:
         yield client
 

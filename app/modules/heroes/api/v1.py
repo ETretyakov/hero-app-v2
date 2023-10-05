@@ -140,4 +140,5 @@ async def search_hero(
     schema: HeroSearch,
     heroes: HeroServices = Depends(get_hero_services),
 ):
-    return await heroes.search(schema=schema)
+    count, items = await heroes.search(schema=schema)
+    return {"count": count, "items": items}
