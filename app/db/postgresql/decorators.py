@@ -1,16 +1,22 @@
+from collections.abc import Awaitable, Callable
 from functools import wraps
-from typing import TYPE_CHECKING
+from typing import Any, TypeVar
 
 
-if TYPE_CHECKING:
-    from typing import Callable
+F = TypeVar("F", bound=Callable[..., Awaitable[Any]])
 
 
-def transaction(fn: "Callable"):
-    """Class method decorator to control session transaction."""
+def transaction(fn: F) -> F:
+    """Wrap an async service method in a session transaction.
+
+    By default the session is committed after the method returns.
+    Pass ``_commit=False`` to flush instead — useful when the method is
+    called as an intermediate step inside a larger transaction.
+    """
 
     @wraps(fn)
-    async def wrapper(*args, **kwargs):
+    async def wrapper(*args: Any, **kwargs: Any) -> Any:
+        # _commit is an out-of-band control kwarg, not part of the wrapped signature
         commit = kwargs.pop("_commit", True)
         result = await fn(*args, **kwargs)
 
@@ -22,4 +28,4 @@ def transaction(fn: "Callable"):
 
         return result
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]

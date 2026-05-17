@@ -3,6 +3,6 @@ from app.modules.heroes.crud.models import Hero
 
 
 class HeroCRUD(CRUD[Hero]):
-    """CRUD operations for hero model."""
+    """Concrete CRUD implementation bound to the ``Hero`` table."""
 
     table = Hero

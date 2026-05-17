@@ -59,7 +59,8 @@ async def search_hero_as_staff(
     schema: HeroSearch,
     heroes: HeroServices = Depends(get_hero_services),
 ):
-    return await heroes.search(schema=schema, as_staff=True)
+    count, items = await heroes.search(schema=schema, as_staff=True)
+    return {"count": count, "items": items}
 
 
 # |Public|

@@ -1,50 +1,43 @@
 from datetime import datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from sqlalchemy import TIMESTAMP, func, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID as PgUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 
 class ID:
-    """Mixin class for SQLAlchemy models uuid field."""
+    """Mixin that adds a UUID primary key column named ``uuid``."""
 
     uuid: Mapped[UUID] = mapped_column(
-        "uuid",
-        UUID(as_uuid=True),
-        default=uuid4,
+        PgUUID(as_uuid=True),
         primary_key=True,
+        # Python-side default so the PK is available on the instance before flush;
+        # server_default is a fallback for raw SQL inserts that bypass the ORM.
+        default=uuid4,
         server_default=text("gen_random_uuid()"),
-        unique=True,
-        nullable=False,
-        index=True,
     )
 
 
 class Timestamp:
-    """Mixin class for SQLAlchemy models created_at & updated_at fields."""
+    """Mixin that adds ``created_at`` and ``updated_at`` audit columns."""
 
     created_at: Mapped[datetime] = mapped_column(
-        "created_at",
         TIMESTAMP,
         server_default=func.now(),
-        nullable=False,
     )
 
     updated_at: Mapped[datetime] = mapped_column(
-        "updated_at",
         TIMESTAMP,
         server_default=func.now(),
-        server_onupdate=func.now(),
-        nullable=False,
+        # onupdate (ORM-side) injects updated_at = now() into every UPDATE statement.
+        # server_onupdate would only tell SQLAlchemy to re-fetch the value but does
+        # not create any PostgreSQL trigger — the column would never actually change.
+        onupdate=func.now(),
     )
 
 
 class Deleted:
-    """Mixin class for SQLAlchemy models deleted_at field."""
+    """Mixin that adds a soft-delete ``deleted_at`` column (NULL means not deleted)."""
 
-    deleted_at: Mapped[datetime] = mapped_column(
-        "deleted_at",
-        TIMESTAMP,
-        nullable=True,
-    )
+    deleted_at: Mapped[datetime | None] = mapped_column(TIMESTAMP)

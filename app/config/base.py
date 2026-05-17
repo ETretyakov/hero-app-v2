@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import BaseSettings, PostgresDsn
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 BASE_DIR = Path(__file__).parents[2]
@@ -10,9 +10,11 @@ ENV_FILE_PATH = BASE_DIR / ".env"
 class AppSettings(BaseSettings):
     """Describes config for app settings."""
 
-    class Config:
-        env_prefix: str = "APP_"
-        env_file: str = ENV_FILE_PATH
+    model_config = SettingsConfigDict(
+        env_prefix="APP_",
+        env_file=ENV_FILE_PATH,
+        extra="ignore",
+    )
 
     title: str = "FastAPI Service"
 
@@ -25,9 +27,11 @@ class AppSettings(BaseSettings):
 class APIPrefixes(BaseSettings):
     """Describes prefixes for API."""
 
-    class Config:
-        env_prefix: str = "PREFIX_"
-        env_file: str = ENV_FILE_PATH
+    model_config = SettingsConfigDict(
+        env_prefix="PREFIX_",
+        env_file=ENV_FILE_PATH,
+        extra="ignore",
+    )
 
     public: str = "/public"
     admin: str = "/admin"
@@ -36,18 +40,16 @@ class APIPrefixes(BaseSettings):
 class PostgreSQL(BaseSettings):
     """Describes PostgreSQL DSN in preferred format."""
 
-    __separator = "://"
+    model_config = SettingsConfigDict(
+        env_prefix="POSTGRESQL_",
+        env_file=ENV_FILE_PATH,
+        extra="ignore",
+    )
 
-    class Config:
-        env_prefix: str = "POSTGRESQL_"
-        env_file: str = ENV_FILE_PATH
-
-    dsn: PostgresDsn = "postgres://user:password@127.0.0.1:5432/db"
+    dsn: str = "postgresql+asyncpg://user:password@127.0.0.1:5432/db"
 
     def build_using_new_scheme(self, scheme: str) -> str:
-        return f"{self.__separator}".join(
-            [scheme, self.dsn.split(sep=self.__separator)[1]],
-        )
+        return "://".join([scheme, self.dsn.split("://")[1]])
 
     @property
     def using_sync_driver(self) -> str:
@@ -70,9 +72,11 @@ class PostgreSQL(BaseSettings):
 class Security(BaseSettings):
     """Describes settings for security reasons."""
 
-    class Config:
-        env_prefix: str = "SECURITY_"
-        env_file: str = ENV_FILE_PATH
+    model_config = SettingsConfigDict(
+        env_prefix="SECURITY_",
+        env_file=ENV_FILE_PATH,
+        extra="ignore",
+    )
 
     api_key: str = "secret_key"
 
@@ -80,8 +84,7 @@ class Security(BaseSettings):
 class Config(BaseSettings):
     """Describes application config."""
 
-    class Config:
-        env_file: str = ENV_FILE_PATH
+    model_config = SettingsConfigDict(env_file=ENV_FILE_PATH, extra="ignore")
 
     app: AppSettings
     prefixes: APIPrefixes

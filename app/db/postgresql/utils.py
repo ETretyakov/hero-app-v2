@@ -1,24 +1,23 @@
-from typing import TYPE_CHECKING, Any
+from collections.abc import Sequence
 
-from sqlalchemy import text
+from sqlalchemy import TextClause, text
 
-
-if TYPE_CHECKING:
-    from sqlalchemy import TextClause
+from app.utils.schemas import OrderByField
 
 
-def scalar_order_by(
-    order_by: list | Any,
-) -> list["TextClause"]:
-    if not isinstance(order_by, list):
+def scalar_order_by(order_by: Sequence[OrderByField] | OrderByField) -> list[TextClause]:
+    """Convert one or more ``OrderByField`` items into SQLAlchemy ``TextClause`` order expressions.
+
+    Accepts either a single ``OrderByField`` or a list; always returns a list
+    ready to be unpacked into ``statement.order_by(*...)``.
+
+    Note: ``item.field`` is interpolated directly into SQL. Use ``OrderByField``
+    subclasses with ``allowed_fields`` defined to prevent ORDER BY injection.
+    """
+    if not isinstance(order_by, Sequence):
         order_by = [order_by]
 
-    items = []
-
-    for item in order_by:
-        if item.desc:
-            items.append(text(f"{item.field} DESC"))
-        else:
-            items.append(text(item.field))
-
-    return items
+    return [
+        text(f"{item.field} DESC") if item.desc else text(item.field)
+        for item in order_by
+    ]

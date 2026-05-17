@@ -1,11 +1,11 @@
 from datetime import datetime
-from typing import Optional
+from typing import ClassVar, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from app.types.heroes import RoleType
-from app.utils.schemas import BaseInput, BaseOutput, BaseSearch
+from app.utils.schemas import BaseInput, BaseOutput, BaseSearch, OrderByField
 
 
 class HeroBase(BaseModel):
@@ -26,8 +26,8 @@ class HeroUpdate(HeroCreate):
 class HeroPatch(BaseInput):
     """Validation schema to patch hero record."""
 
-    nickname: Optional[str] = Field(max_length=255)
-    role: Optional[RoleType]
+    nickname: Optional[str] = Field(default=None, max_length=255)
+    role: Optional[RoleType] = None
 
 
 class HeroRetrieve(BaseOutput, HeroBase):
@@ -37,14 +37,23 @@ class HeroRetrieve(BaseOutput, HeroBase):
 
     created_at: datetime
     updated_at: datetime
-    deleted_at: Optional[datetime]
+    deleted_at: Optional[datetime] = None
+
+
+class HeroOrderByField(OrderByField):
+    """``OrderByField`` restricted to Hero model columns."""
+
+    allowed_fields: ClassVar[frozenset[str]] = frozenset({
+        "uuid", "nickname", "role", "created_at", "updated_at", "deleted_at",
+    })
 
 
 class HeroSearch(BaseSearch):
     """Schema to validate hero search parameters."""
 
-    nickname: Optional[str] = Field(max_length=255)
-    role: Optional[RoleType]
+    nickname: Optional[str] = Field(default=None, max_length=255)
+    role: Optional[RoleType] = None
+    order_by: list[HeroOrderByField] = Field(default_factory=list)
 
 
 class HeroSearchResult(BaseModel):
